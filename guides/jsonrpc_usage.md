@@ -1,6 +1,6 @@
 # JSON RPC Usage
 
-This will show you how to use the json-rpc to interact with your bitcoin node
+This will show you how to use the json-rpc to interact with your bitcoin node on the testnet chain.
 
 ## Uptime
 
@@ -173,6 +173,8 @@ curl -s -u "bitcoin:${bpass}" -d '{"jsonrpc": "1.0", "id": "curl", "method": "ge
 }
 ```
 
+## Transactions
+
 If we list transactions for our wallet it should be empty:
 
 ```
@@ -180,7 +182,15 @@ curl -s -u "bitcoin:${bpass}" -d '{"jsonrpc": "1.0", "id": "curl", "method": "li
 {"result":[],"error":null,"id":"curl"}
 ```
 
-Go to https://coinfaucet.eu/en/btc-testnet/ and send testnet btc to `tb1qzxmefmcpq98z42v67a80gvug2fe979r5h768yv`, once the transaction is submitted run the `listtransactions` method again:
+Go to https://coinfaucet.eu/en/btc-testnet/ and send testnet btc to `tb1qzxmefmcpq98z42v67a80gvug2fe979r5h768yv`, once the transaction is submitted run the `listtransactions` method again.
+
+Other faucets that you can try:
+- https://testnet-faucet.mempool.co/
+- https://coinfaucet.eu/en/btc-testnet/
+- https://bitcoinfaucet.uo1.net/
+- https://onchain.io/bitcoin-testnet-faucet
+- https://testnet.qc.to/
+- https://tbtc.mocacinno.com/claim.php
 
 ```
 curl -s -u "bitcoin:${bpass}" -d '{"jsonrpc": "1.0", "id": "curl", "method": "listtransactions", "params": []}' -H 'content-type: text/plain;' http://127.0.0.1:18332/wallet/rpi01-main
@@ -193,6 +203,59 @@ As you can see theres still nothing, but to add at this moment in time, the IBD 
 curl -s -u "bitcoin:${bpass}" -d '{"jsonrpc": "1.0", "id": "curl", "method": "getblockchaininfo", "params": []}' -H 'content-type: text/plain;' http://127.0.0.1:18332/ | python -m json.tool | grep verificationprogress
         "verificationprogress": 0.57450649965558,
 ```
+
+After some time we can look at the logs as one method to see how far the verification progress is:
+
+```
+journalctl -fu bitcoind
+Jun 25 10:53:31 rpi-01 bitcoind[16198]: 2021-06-25T08:53:31Z UpdateTip: new best=00000000afb049b341ddf19d8080af6524a05f618abbf0ec51806dcef7bd5b9d height=2006268 version=0x20000000 log2_work=74.331879 tx=60315046 date='2021-06-25T08:55:11Z' progress=1.000000 cache=46.3MiB(298787txo)
+```
+
+And we can see its synced `progress=1.000000`, we can then also validate with:
+
+```
+curl -s -u "bitcoin:${bpass}" -d '{"jsonrpc": "1.0", "id": "curl", "method": "getblockchaininfo", "params": []}' -H 'content-type: text/plain;' http://127.0.0.1:18332/ | python -m json.tool | grep verificationprogress
+        "verificationprogress": 0.9999985282659621,
+```
+
+Now we should be able to see our funds and we can run the `listtransactions` method:
+
+```
+curl -s -u "bitcoin:${bpass}" -d '{"jsonrpc": "1.0", "id": "curl", "method": "listtransactions", "params": []}' -H 'content-type: text/plain;' http://127.0.0.1:18332/wallet/rpi01-main | python -m json.tool
+{
+    "error": null,
+    "id": "curl",
+    "result": [
+        {
+            "address": "tb1qzxmefmcpq98z42v67a80gvug2fe979r5h768yv",
+            "amount": 0.01828492,
+            "bip125-replaceable": "no",
+            "blockhash": "0000000086003a9060e5743bfe0c7d81805a1948d6d5e326c5e3bb2f9ea83db7",
+            "blockheight": 2006194,
+            "blockindex": 8,
+            "blocktime": 1624552612,
+            "category": "receive",
+            "confirmations": 75,
+            "label": "",
+            "time": 1624552612,
+            "timereceived": 1624608999,
+            "txid": "1635a05862e46a02306cfb9b5fd2f1f15a214a7227d29502550b40abdfe113d3",
+            "vout": 1,
+            "walletconflicts": []
+        }
+    ]
+}
+```
+
+We can see the transaction, and because we are running a testnet chain, we need at least 1 confirmation, which we have 75 at the moment, so we should see the funds in our wallet:
+
+```
+curl -s -u "bitcoin:${bpass}" -d '{"jsonrpc": "1.0", "id": "curl", "method": "getbalance", "params": []}' -H 'content-type: text/plain;' http://127.0.0.1:18332/wallet/rpi01-main
+{"result":0.01828492,"error":null,"id":"curl"}
+```
+
+We can also do a lookup on the `txid`, on a testnet blockchain explorer, like below:
+- https://www.blockchain.com/btc-testnet/tx/1635a05862e46a02306cfb9b5fd2f1f15a214a7227d29502550b40abdfe113d3
 
 [WIP]
 
