@@ -102,7 +102,8 @@ sudo mv bitcoin.conf.tmp $BITCOIN_DATA/bitcoin.conf
 sudo chown bitcoin:bitcoin $BITCOIN_DATA/bitcoin.conf
 sudo chown -R bitcoin $BITCOIN_DATA
 sudo ln -sfn $BITCOIN_DATA /home/bitcoin/.bitcoin
-sudo chown -R bitcoin:bitcoin /home/bitcoin/.bitcoin
+sudo chown -h bitcoin:bitcoin /home/bitcoin
+sudo chown -R bitcoin:bitcoin /home/bitcoin
 ```
 
 Move the systemd unit file in place, then reload systemd and start bitcoind:
