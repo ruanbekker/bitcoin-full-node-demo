@@ -50,10 +50,10 @@ Extract the package to `/usr/local` and exclude any graphical user interfacing b
 ```
 sudo tar -xzvf bitcoin-${BITCOIN_VERSION}-${ARCH}-linux-gnu.tar.gz -C /usr/local --strip-components=1 --exclude=*-qt
 sudo rm -rf /tmp/*
-sudo mkdir $BITCOIN_DATA
-sudo chown -R bitcoin:bitcoin $BITCOIN_DATA
-sudo ln -sfn "$BITCOIN_DATA" /home/bitcoin/.bitcoin
+sudo mkdir ${BITCOIN_DATA}
+sudo ln -sfn ${BITCOIN_DATA} /home/bitcoin/.bitcoin
 sudo chown -h bitcoin:bitcoin /home/bitcoin/.bitcoin
+sudo chown -R bitcoin:bitcoin ${BITCOIN_DATA}
 ```
 
 ### Configuration
