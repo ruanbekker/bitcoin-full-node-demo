@@ -15,7 +15,7 @@ export ARCH=x86_64
 export BITCOIN_VERSION=0.21.1
 export BITCOIN_URL=https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}-${ARCH}-linux-gnu.tar.gz
 export BITCOIN_SIGNATURE=01EA5486DE18A882D4C2684590C8019E36C2E964
-export BITCOIN_DATA=/data
+export BITCOIN_DATA=/blockchain
 ```
 
 ### Installation
@@ -50,8 +50,8 @@ Extract the package to `/usr/local` and exclude any graphical user interfacing b
 ```
 sudo tar -xzvf bitcoin-${BITCOIN_VERSION}-${ARCH}-linux-gnu.tar.gz -C /usr/local --strip-components=1 --exclude=*-qt
 sudo rm -rf /tmp/*
-sudo mkdir "$BITCOIN_DATA"
-sudo chown -R bitcoin:bitcoin "$BITCOIN_DATA"
+sudo mkdir $BITCOIN_DATA
+sudo chown -R bitcoin:bitcoin $BITCOIN_DATA
 sudo ln -sfn "$BITCOIN_DATA" /home/bitcoin/.bitcoin
 sudo chown -h bitcoin:bitcoin /home/bitcoin/.bitcoin
 ```
@@ -61,7 +61,7 @@ sudo chown -h bitcoin:bitcoin /home/bitcoin/.bitcoin
 Create the bitcoin configuration, here you see I am using the testnet and due to storage restrictions for my use-case I am setting `pruning` mode to 1GB, and if you dont set `BITCOIN_RPC_USER` it will use the user `bitcoin` and if you don't set `BITCOIN_RPC_PASSWORD` it will generate a password for the json-rpc interface: 
 
 ```
-cat > "bitcoin.conf.tmp" << EOF
+cat > bitcoin.conf.tmp << EOF
 datadir=/home/bitcoin/.bitcoin
 printtoconsole=1
 rpcallowip=127.0.0.1
@@ -98,10 +98,10 @@ EOF
 Now move the temporary config files, change the ownership and symlink the bitcoin home directory to the path that we created earlier:
 
 ```
-sudo mv bitcoin.conf.tmp "$BITCOIN_DATA/bitcoin.conf"
-sudo chown bitcoin:bitcoin "$BITCOIN_DATA/bitcoin.conf"
-sudo chown -R bitcoin "$BITCOIN_DATA"
-sudo ln -sfn "$BITCOIN_DATA" /home/bitcoin/.bitcoin
+sudo mv bitcoin.conf.tmp $BITCOIN_DATA/bitcoin.conf
+sudo chown bitcoin:bitcoin $BITCOIN_DATA/bitcoin.conf
+sudo chown -R bitcoin $BITCOIN_DATA
+sudo ln -sfn $BITCOIN_DATA /home/bitcoin/.bitcoin
 sudo chown -R bitcoin:bitcoin /home/bitcoin/.bitcoin
 ```
 
