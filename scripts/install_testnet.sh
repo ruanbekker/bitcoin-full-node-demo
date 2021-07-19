@@ -21,9 +21,9 @@ sha256sum -c SHA256SUM
 sudo tar -xzvf bitcoin-${BITCOIN_VERSION}-${ARCH}-linux-gnu.tar.gz -C /usr/local --strip-components=1 --exclude=*-qt
 sudo rm -rf /tmp/*
 sudo mkdir -p ${BITCOIN_DATA}/.bitcoin
-sudo chown -R bitcoin:bitcoin ${BITCOIN_DATA}
-sudo ln -sfn ${BITCOIN_DATA} /home/bitcoin
+sudo ln -sfn ${BITCOIN_DATA} /home/bitcoin/.bitcoin
 sudo chown -h bitcoin:bitcoin /home/bitcoin/.bitcoin
+sudo chown -R bitcoin:bitcoin ${BITCOIN_DATA}
 
 cat > "bitcoin.conf.tmp" << EOF
 datadir=${BITCOIN_DATA}/.bitcoin
@@ -46,10 +46,10 @@ After=network.target
 [Service]
 User=bitcoin
 Group=bitcoin
-WorkingDirectory=${BITCOIN_DATA}
+WorkingDirectory=/home/bitcoin
 
 Type=simple
-ExecStart=/usr/local/bin/bitcoind -conf=${BITCOIN_DATA}/.bitcoin/bitcoin.conf
+ExecStart=/usr/local/bin/bitcoind -conf=/home/bitcoin/.bitcoin/bitcoin.conf
 
 [Install]
 WantedBy=multi-user.target
